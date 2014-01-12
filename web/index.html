@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Data Weaver</title>
+<script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
+<link href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+<script type="text/javascript" src="js/basics.js"></script>
+<script type="text/javascript" src="js/interact.js"></script>
+<script type="text/javascript" src="js/engine.js"></script>
+<script type="text/javascript" src="js/forms.js"></script>
+<script type="text/javascript" src="js/output.js"></script>
+<script type="text/javascript" src="js/weaveanim.js"></script>
+<script type="text/javascript" src="js/URI.js"></script>
+<link href="js/prettify/prettify.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="js/prettify/prettify.js"></script>
+<script type="text/javascript">
+$(function() {
+  init();
+});
+</script>
+</head>
+
+<body style="margin: 0">
+
+<canvas id="canvas" width="1100" height="100" style="width: 100%; height: 100; border: none"></canvas>
+
+<div style="margin: 10px">
+<h1>Web Weaver</h1>
+
+<table width="100%">
+  <tr>
+    <td>
+      <div id="commands">
+        <b>URL:</b>
+        <input type="text" name="url" />
+        <input type="button" value="Load" onclick="add_load();" />
+        <input type="checkbox" name="load_noscript" value="Load Noscript" /> Remove Scripts<br />
+        
+        <div id="with_load" style="display: none">
+          <input type="button" value="Identify Form" onclick="identify_element('form');" />
+          <input type="button" value="Identify One" onclick="identify_element();" />
+          <input type="button" value="Identify All" onclick="identify_element_all();" />
+          <input type="button" value="Show Identified" onclick="show_identified();" />
+          <input type="text" name="selector" />
+          <input type="button" value="Find" onclick="add_find()" />
+        </div>
+      </div>
+    </td>
+    <td>
+      <div id="with_form" style="display: none">
+        <table id="form_fields">
+          <tr><th>name</th><th>value</th><th>options</th></tr>
+        </table>
+        <input type="button" value="Click Submit" onclick="add_form_submit_load();" />
+      </div>
+      <div id="with_html" style="display: none">
+        <pre id="objects" class="prettyprint" style="width: 400px; height: 100px; overflow: scroll"></pre>
+        <input type="button" value="Click Load" onclick="add_click_load();" />
+        <input type="button" value="Text" onclick="add_text();" />
+        <input type="button" value="Attr" onclick="add_attr();" />
+        <input type="text" name="attribute" />
+      </div>
+      <div id="with_text" style="display: none">
+        <input type="button" value="Load Texts" onclick="add_load_text();" />
+        <input type="checkbox" name="load_text_noscript" value="Load Noscript" /> Remove Scripts<br />
+      </div>
+    </td>
+  </tr>
+</table>
+    
+
+<b>Status:</b> <span id="status"></span><br />
+
+<iframe id="iframe" name="iframe" src="ss/blank.html" width="100%" height="300"><p>Your browser does not support iframes.</p></iframe>
+
+Actions Code:<br />
+<textarea name="actions" id="actions" rows="20" cols="80"></textarea><br />
+
+<input type="button" value="Debug Run" onclick="rundebug();" />
+<input type="button" value="Extract" onclick="execute();" />
+
+<pre id="result"></pre>
+</div>
+</body>
+</html>

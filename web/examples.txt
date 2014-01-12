@@ -1,0 +1,105 @@
+# WorldBank archives
+load("http://documents.worldbank.org/curated/en/docadvancesearch/docs?query=&sType=2&author=&aType=2&docTitle=&tType=2&qDate=3&fromDate=&toDate=&disclDate=3&fromDisclDate=&toDisclDate=&region=&cntry=&lang=&lndinstr=&prdln=&majorDocTY=&docTY=&teraTopic=&topic=672795&discType=&report=&loan=&credit=&projectId=&trustFunds=&UNRegnNbr=&sortDesc=docdt&sortType=asc", {noscript: true});
+find("div#listView>div.n07v3-generic-list-comp>a.title");
+attr("href");
+load(result.text, {noscript: true});
+find("html>body>div.doc-container>div.doc-inner-container>div.template-d>div.template-d-left>div.details-download>div.details-download-right>div.detailBox:eq(0)>div.content>ul.documentLnks>li.textdoc>a");
+attr("href");
+load(result.text);
+### NEXT:
+# Need to add "Raw" checkbox, and then bipasses wget.html
+# Need to add "append" button to various places, including with_html,
+and then just appends to #result
+# Need to check to see if automatic looping works.
+
+# Federal Register
+load("http://www.gpo.gov/fdsys/browse/collection.action?collectionCode=FR&browsePath=1994&isCollapsed=true&leafLevelBrowse=false&ycord=378");
+find("div#browse-drilldown-mask>div.level1.browse-level>a");
+click_load();
+
+# Sea Around Us Country Data
+get("http://www.seaaroundus.org/sponsor/feru.aspx");
+find("select#ctl00_ContentPlaceHolder1_eezAreas_ddl>option");
+attr('value');
+replace(/~(.+)/, "http://www.seaaroundus.org$1");
+//replace(/~(.+?)\/11\.aspx/, "http://www.seaaroundus.org$1/1.aspx");
+
+var urls = state.result;
+for (var ii in urls) {
+    if (ii > 153)
+      break;
+    if (ii < 53)
+      continue;
+    $('#result').append(urls[ii]);
+    load(urls[ii], {noxform: true});
+    find("input#ctl00_ContentPlaceHolder1_btnShowData");
+    postload();
+    find("table#ctl00_ContentPlaceHolder1_dgTabularData");
+    extract_table(",", true);
+}
+
+# Sea Around Us EEZ Data
+get("http://www.seaaroundus.org/sponsor/feru.aspx");
+find("select#ctl00_ContentPlaceHolder1_eezAreas_ddl>option");
+attr('value');
+replace(/~(.+?)\/11\.aspx/, "http://www.seaaroundus.org$1.aspx");
+
+var urls = state.result;
+for (var ii in urls) {
+    if (ii < 1)
+      continue;
+    $('#result').append(urls[ii]);
+    load(urls[ii]);
+
+    find("table#ctl00_ContentPlaceHolder1_specs_tblMain>tbody>tr>td>div.AreaSpec>span");
+    text();
+    
+    $('#result').append("," + state.texts.map(function(x) {
+          return x.replace(/,/g, '')
+            }).join(',') + "\n");
+}
+
+
+# MPA Global Data
+start = 1;
+load("http://www.mpaglobal.org/index.php?action=search");
+find("html>body>table.normal>tbody>tr>td>table>tbody>tr>td>form>table.style>tbody>tr>td>select>option");
+var countries = state.htmls;
+for (var ii = start; ii < countries.length; ii++) {
+  select(state.htmls[ii]);
+  var country_name = $(state.htmls[ii]).text()
+  click('input.submit');
+  find("html>body>table.normal>tbody>tr>td>table>tbody>tr>td>table>tbody>tr>td.style>table.normal>tbody>tr>td>a.normal");
+  attr("href");
+  var mpas = state.texts;
+  for (var jj = 0; jj < mpas.length; jj++) {
+    load(mpas[jj]);
+    if (ii == start && jj == 0) {
+      addrow("Country");
+      addinputs_header();
+    }
+    addrow(country_name);
+    addinputs();
+  }
+
+  load("http://www.mpaglobal.org/index.php?action=search");
+  find("html>body>table.normal>tbody>tr>td>table>tbody>tr>td>form>table.style>tbody>tr>td>select>option");
+}
+
+
+
+load("http://www.sepb.gov.cn/fa/cms/shhj/quality1_login.jsp");
+for (var date = new Date(937800000000); date <= new Date(1352869200000); date = new Date(date.getTime() + 24*60*60*1000)) {
+  find("div#divNow>table>tbody>tr:eq(6)>td>form");
+  $(state.form).find(":input[name=schDate]").val($.datepicker.formatDate("yy-mm-dd", date));
+  click_load(find_submit(state.form));
+  addrow($.datepicker.formatDate("yy-mm-dd", date))
+  find("div#divNow>table>tbody>tr>td>span.color_orange");
+  text();
+  add_texts();
+  state.htmls = state.doc;
+  find("div#divNext>table>tbody>tr>td>span.color_orange");
+  text();
+  add_texts();
+  state.htmls = state.doc;
+}
