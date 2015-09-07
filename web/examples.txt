@@ -21,28 +21,8 @@ click_load();
 get("http://www.seaaroundus.org/sponsor/feru.aspx");
 find("select#ctl00_ContentPlaceHolder1_eezAreas_ddl>option");
 attr('value');
-replace(/~(.+)/, "http://www.seaaroundus.org$1");
-//replace(/~(.+?)\/11\.aspx/, "http://www.seaaroundus.org$1/1.aspx");
-
-var urls = state.result;
-for (var ii in urls) {
-    if (ii > 153)
-      break;
-    if (ii < 53)
-      continue;
-    $('#result').append(urls[ii]);
-    load(urls[ii], {noxform: true});
-    find("input#ctl00_ContentPlaceHolder1_btnShowData");
-    postload();
-    find("table#ctl00_ContentPlaceHolder1_dgTabularData");
-    extract_table(",", true);
-}
-
-# Sea Around Us EEZ Data
-get("http://www.seaaroundus.org/sponsor/feru.aspx");
-find("select#ctl00_ContentPlaceHolder1_eezAreas_ddl>option");
-attr('value');
-replace(/~(.+?)\/11\.aspx/, "http://www.seaaroundus.org$1.aspx");
+//replace(/~(.+)/, "http://www.seaaroundus.org$1");
+replace(/~(.+?)\/11\.aspx/, "http://www.seaaroundus.org$1/1.aspx");
 
 var urls = state.result;
 for (var ii in urls) {
@@ -50,15 +30,11 @@ for (var ii in urls) {
       continue;
     $('#result').append(urls[ii]);
     load(urls[ii]);
-
-    find("table#ctl00_ContentPlaceHolder1_specs_tblMain>tbody>tr>td>div.AreaSpec>span");
-    text();
-    
-    $('#result').append("," + state.texts.map(function(x) {
-          return x.replace(/,/g, '')
-            }).join(',') + "\n");
+    find("input#ctl00_ContentPlaceHolder1_btnShowData");
+    postload();
+    find("table#ctl00_ContentPlaceHolder1_dgTabularData");
+    extract_table(",", true);
 }
-
 
 # MPA Global Data
 start = 1;
@@ -89,8 +65,9 @@ for (var ii = start; ii < countries.length; ii++) {
 
 
 load("http://www.sepb.gov.cn/fa/cms/shhj/quality1_login.jsp");
-for (var date = new Date(937800000000); date <= new Date(1352869200000); date = new Date(date.getTime() + 24*60*60*1000)) {
-  find("div#divNow>table>tbody>tr:eq(6)>td>form");
+find("div#divNow>table>tbody>tr:eq(6)>td>form");
+//for (var date = new Date(1351742400000); date <= new Date(1352955600000); date = new Date(date.getTime() + 24*60*60*1000)) {
+var date = new Date(1351742400000);
   $(state.form).find(":input[name=schDate]").val($.datepicker.formatDate("yy-mm-dd", date));
   click_load(find_submit(state.form));
   addrow($.datepicker.formatDate("yy-mm-dd", date))
@@ -101,5 +78,4 @@ for (var date = new Date(937800000000); date <= new Date(1352869200000); date = 
   find("div#divNext>table>tbody>tr>td>span.color_orange");
   text();
   add_texts();
-  state.htmls = state.doc;
-}
+//}

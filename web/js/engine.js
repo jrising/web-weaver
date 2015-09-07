@@ -30,7 +30,7 @@ function sleep_async() {
 
     while (state.async && ((new Date()).getTime() - startTime < async_waittime_ms)) {
         $.ajax({
-            url: "ss/wait.html",
+            url: "ss/wait.php",
             async: false,
             data: {
                 us: 250*1000,
@@ -50,6 +50,7 @@ function sleep_async() {
 // Note that this function needs a sequence system
 //   where each user function adds to the sequence, then executes
 function load(url, options) {
+    alert(url);
     url = url || state.result;
 
     status("Getting " + url);
@@ -61,6 +62,12 @@ function load(url, options) {
             var cookie = $('#iframe').contents().find('#wget_cookie').html();
             if (cookie)
                 state.cookie = cookie;
+            var redirect = $('#iframe').contents().find('#wget_redirect').html();
+            if (redirect) {
+                setTimeout(function() {
+                    load(redirect);
+                }, 1000);
+            }
             status("Success");
             $('#with_load').show();
         });

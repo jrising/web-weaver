@@ -51,7 +51,7 @@ jQuery.fn.getGeneralPath = function() {
 
 function ui_url() {
     var url = $(':input[name=url]').val();
-    if (!(url.indexOf('http://') == 0))
+    if (!(url.indexOf('http://') == 0) && !(url.indexOf('https://') == 0))
         url = 'http://' + url;
     return url;
 }
@@ -87,14 +87,19 @@ function add_load_text() {
 function localurl(url, options) {
     options = options || {};
 
+    var url = "ss/wget.html?ww_url=" + encodeURIComponent(url);
     if (options.noscript)
-        return "ss/wget.html?ww_url=" + encodeURIComponent(url) + '&ww_noscript=true';
-    else
-        return "ss/wget.html?ww_url=" + encodeURIComponent(url);
+        url += '&ww_noscript=true';
+    if (options.noxhtml)
+        url += "&ww_noxhtml=true";
+    if (options.noxform)
+        url += "&ww_noxform=true";
+
+    return url;
 }
 
 function posturl(url, cookie, post) {
-    var url = "ss/wget.html?ww_url=" + encodeURIComponent(url) + "&ww_cookie=" + encodeURIComponent(cookie);
+    var url = "ss/wget.php?ww_url=" + encodeURIComponent(url) + "&ww_cookie=" + encodeURIComponent(cookie);
     if (post) {
         var postdata = "";
         for (var ii in post) {
